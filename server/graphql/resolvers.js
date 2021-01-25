@@ -5,7 +5,7 @@ const resolvers = {
         user: async (parent, args, context, info) =>{
             try {
                 const request = await axios.get(`http://localhost:3004/user/${args.id}`);
-                return delayed.data;
+                return request.data;
             } catch(error) {
                 throw error;
             }
