@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardGroup, Form, Button } from 'react-bootstrap';
-import { gql, useQuery, useLazyQuery } from '@apollo/client'
+import { gql, useQuery, useLazyQuery, NetworkStatus } from '@apollo/client'
 
 
 const GET_USER_BY_ID = gql`
@@ -30,6 +30,10 @@ const Home = () => {
   const getAllUsers = useQuery(GET_ALL_USERS)
   const [userGetLazy, userGetLazyResult] = useLazyQuery(GET_USER_BY_ID)
   // const { data, loading, error } = useQuery(GET_USER_BY_ID)
+
+  if (getAllUsers.networkStatus === NetworkStatus.ready) {
+    console.log('Done fetching')
+  }
 
   const allUsersHandler = () => (
     getAllUsers.data ?
