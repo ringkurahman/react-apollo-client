@@ -1,13 +1,15 @@
-import React,{ useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardGroup, Form, Button } from 'react-bootstrap';
-import { gql, useQuery } from '@apollo/client'
+import { gql, useQuery, useLazyQuery } from '@apollo/client'
 
 
 const GET_USER_BY_ID = gql`
-  query{
-    user(id:"1"){
+  query GetUserById($id:ID!){
+    user(id:$id){
       id
       name
+      lastname
+      email
     }
   }
 `
@@ -24,8 +26,10 @@ const GET_ALL_USERS = gql`
 
 const Home = () => {
 
+  const [userId, setUserId] = useState('')
   const getAllUsers = useQuery(GET_ALL_USERS)
-  const { data, loading, error } = useQuery(GET_USER_BY_ID)
+  const [userGetLazy, userGetLazyResult] = useLazyQuery(GET_USER_BY_ID)
+  // const { data, loading, error } = useQuery(GET_USER_BY_ID)
 
   const allUsersHandler = () => (
     getAllUsers.data ?
@@ -38,7 +42,16 @@ const Home = () => {
         </Card>
       ))
       : null
- )
+  )
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    userGetLazy({
+      variables: {
+        id: userId
+      }
+    })
+  }
 
   return (
     <div className="App">
@@ -47,6 +60,29 @@ const Home = () => {
         <CardGroup>
           { allUsersHandler() }
         </CardGroup>
+      </>
+      <>
+        <h3>Get user by Id</h3>
+        <Form onSubmit={ handleSubmit }>
+          <Form.Group>
+            <Form.Control
+              type="text"
+              placeholder="Enter User Id"
+              onChange={(e) => setUserId(e.target.value)}
+              value={ userId }
+            />
+          </Form.Group>
+          <Button type="submit">Submit</Button>
+        </Form>
+        {
+          userGetLazyResult.data ?
+            <div className="mt-4">
+              <div>Name: {userGetLazyResult.data.user.name}</div>
+              <div>Last Name: {userGetLazyResult.data.user.lastname}</div>
+              <div>Email: { userGetLazyResult.data.user.email }</div>
+            </div>
+            : null
+        }
       </>
     </div>
   );
