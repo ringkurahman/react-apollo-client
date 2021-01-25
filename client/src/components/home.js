@@ -84,6 +84,23 @@ const Home = () => {
             : null
         }
       </>
+      <hr />
+      <Button
+        onClick={ () => getAllUsers.stopPolling() }
+      >
+        STOP POLLING
+      </Button>
+      <Button
+        className="mx-3"
+        onClick={ () => getAllUsers.startPolling(1000) }
+      >
+        START POLLING
+      </Button>
+      <Button
+        onClick={ () => getAllUsers.refetch() }
+      >
+        REFETCH
+      </Button>
     </div>
   );
 }
